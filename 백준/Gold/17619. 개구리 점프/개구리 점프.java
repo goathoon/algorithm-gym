@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,7 +47,7 @@ class Main {
             st = new StringTokenizer(br.readLine(), " ");
             int x1 = Integer.parseInt(st.nextToken());
             int x2 = Integer.parseInt(st.nextToken());
-            if (tree[x1] == tree[x2]) {
+            if (find(x1) == find(x2)) {
                 System.out.println(1);
             } else {
                 System.out.println(0);
