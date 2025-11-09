@@ -1,13 +1,11 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 class Main {
 
-    static boolean[] visit;
+    static int[] parent;
     static List<List<Integer>> graph;
 
     public static void main(String[] args) throws IOException {
@@ -20,32 +18,30 @@ class Main {
             int node = Integer.parseInt(st.nextToken());
             int edge = Integer.parseInt(st.nextToken());
 
-            visit = new boolean[node+1];
-            if (node == 0) {
+            if(node == 0 && edge == 0){
                 return;
             }
-            graph = new ArrayList<>();
-            for (int n = 0; n <= node; n++) {
-                graph.add(new ArrayList<>());
+
+            parent = new int[node+1];
+            for(int i = 0; i < parent.length; i++) {
+                parent[i] = i;
             }
+
             for(int e = 0; e < edge; e++) {
                 st = new StringTokenizer(br.readLine());
                 int n1 = Integer.parseInt(st.nextToken());
                 int n2 = Integer.parseInt(st.nextToken());
-                graph.get(n1).add(n2);
-                graph.get(n2).add(n1);
+                union(n1,n2);
             }
 
-            int trees = 0;
-            for(int n = 1; n <= node; n++) {
-                if (visit[n]) {
-                    continue;
+            Set<Integer> set = new HashSet<>();
+            for (int n = 1; n < parent.length; n++) {
+                if (parent(n) != 0) {
+                    set.add(parent[n]);
                 }
-                if(isCycle(n,0)) {
-                    continue;
-                }
-                trees++;
             }
+
+            int trees = set.size();
             if(trees > 1) {
                 System.out.printf("Case %d: A forest of %d trees.\n", cnt, trees);
             } else if (trees == 1) {
@@ -56,15 +52,26 @@ class Main {
         }
     }
 
-    public static boolean isCycle(int curNode, int beforeNode) {
-        visit[curNode] = true;
-        for (int next : graph.get(curNode)) {
-            if (next == beforeNode) continue;
-            if (visit[next]) return true;
-            if(isCycle(next, curNode)) {
-                return true;
+    public static void union (int n1, int n2) {
+        int p1 = parent(n1);
+        int p2 = parent(n2);
+        if (p1 == p2) {
+            parent[p2] = 0;
+            parent[p1] = 0;
+        }
+        else {
+            if (p1 < p2) {
+                parent[p2] = p1;
+            } else {
+                parent[p1] = p2;
             }
         }
-        return false;
+    }
+
+    public static int parent(int n) {
+        if( n == 0) return 0;
+        if (parent[n] == n){
+            return n;
+        } return parent[n] = parent(parent[n]);
     }
 }
